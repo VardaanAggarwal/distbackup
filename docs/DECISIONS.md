@@ -91,3 +91,24 @@ Append-only. One entry per meaningful decision (CLAUDE.md R9).
 **Rationale:** CLAUDE.md R5: provider count is scope, and one cloud provider must be complete before a second starts. The provider abstraction (R11) is what demonstrates cloud-agnosticism; a second half-finished provider demonstrates less than one complete one plus a clean interface.
 **Trade-off accepted:** The project is cloud-agnostic by construction but only demonstrates one cloud. The README must say this explicitly rather than implying GCP support exists.
 **Source:** CLAUDE.md R5.
+
+---
+
+## D-010: CLI uses the standard library `flag`, not cobra
+**Date:** 2026-08-26
+**Decision:** Subcommand dispatch is a `switch` over `os.Args[1]` with a `flag.FlagSet` per command.
+**Alternatives considered:** cobra, which CLAUDE.md R3 explicitly permits.
+**Rationale:** Six commands do not need a framework, and staying on the standard library keeps the whole project at **zero third-party dependencies**. That is not cosmetic: R7 requires `go test ./...` to pass with the machine offline, and every dependency is a way for that to stop being true. It also means a reviewer can read the entire program without knowing anyone else's API.
+**Trade-off accepted:** No generated completions, no nested subcommands, and help text is hand-written. All cheap at this size.
+**Related:** `golang.org/x/sync/errgroup` was added and then removed for the same reason — it silently pushed the `go` directive from 1.23 to 1.25 and pulled a new toolchain. The ~30 lines of coordination it provided are in `internal/pipeline/group.go`, which R3 wanted from scratch anyway.
+
+---
+
+## D-011: An interrupted backup's packs are adopted by the next run
+**Date:** 2026-08-26
+**Decision:** Documented and tested as intended behaviour, not tidied away.
+**Alternatives considered:** Treating post-crash packs as garbage to be collected before the next backup.
+**Rationale:** Found by a test that expected the opposite. A crashed run leaves packs but no index and no manifest. The next `repo.Open` finds no index and rebuilds one from the pack tails, so those blobs are already known and the new backup deduplicates against them — the interrupted run's work is reused rather than repeated.
+It falls out of two decisions made for other reasons: content addressing (a blob's identity does not depend on which run wrote it) and an index that is a rebuildable cache rather than a source of truth.
+**Trade-off accepted:** Packs from a crashed run whose source is never backed up again linger until `gc`. That is the case `gc` exists for.
+**Source:** `internal/e2e.TestCrashedBackupWorkIsReusedByNextRun` and `TestGCReclaimsGenuineOrphans`.
