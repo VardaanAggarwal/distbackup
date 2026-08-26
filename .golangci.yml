@@ -1,0 +1,43 @@
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gosec
+    - bodyclose      # R-008: an undrained io.ReadCloser on the retry path is a real leak
+    - errorlint      # enforce %w wrapping and errors.Is/As over type assertions
+    - misspell
+    - unconvert
+    - copyloopvar
+    - nilerr
+    - revive
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        # CLAUDE.md: every exported symbol has a doc comment.
+        disabled: false
+  gosec:
+    excludes:
+      # math/rand is used for retry jitter, which is not a security context.
+      # The specific call sites carry //nolint:gosec with that reasoning.
+      - G404
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - errcheck

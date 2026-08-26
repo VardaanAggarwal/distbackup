@@ -1,0 +1,28 @@
+# Credentials — never commit. See CLAUDE.md R7/R8.
+.env
+.env.*
+*.pem
+*.key
+credentials
+credentials.*
+.aws/
+.gcloud/
+.config/gcloud/
+
+# Build output
+/bin/
+/dist/
+distbackup
+
+# Test artifacts and local repositories
+*.test
+*.out
+coverage.*
+/testdata/tmp/
+*.distbackup-repo/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
