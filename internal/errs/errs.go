@@ -58,6 +58,11 @@ const (
 	// A bug in this program, not a condition to retry.
 	KindInvalid
 
+	// KindPermission means access was denied. Separate from KindInvalid
+	// because the backup pipeline branches on it: an unreadable file is
+	// skipped and reported, whereas a malformed request aborts the run.
+	KindPermission
+
 	// KindUnsupported means the operation is not implemented by this
 	// provider or format version.
 	KindUnsupported
@@ -84,6 +89,8 @@ func (k Kind) String() string {
 		return "expired"
 	case KindInvalid:
 		return "invalid"
+	case KindPermission:
+		return "permission_denied"
 	case KindUnsupported:
 		return "unsupported"
 	case KindCanceled:
@@ -175,3 +182,6 @@ func IsCorrupt(err error) bool { return KindOf(err) == KindCorrupt }
 
 // IsAlreadyExists reports whether err indicates a lost create-only race.
 func IsAlreadyExists(err error) bool { return KindOf(err) == KindAlreadyExists }
+
+// IsPermission reports whether err indicates access was denied.
+func IsPermission(err error) bool { return KindOf(err) == KindPermission }

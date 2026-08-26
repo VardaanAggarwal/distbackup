@@ -40,7 +40,7 @@ func TestRetryableKinds(t *testing.T) {
 	all := []Kind{
 		KindUnknown, KindNotFound, KindAlreadyExists, KindCorrupt,
 		KindThrottled, KindTransient, KindExpired, KindInvalid,
-		KindUnsupported, KindCanceled,
+		KindPermission, KindUnsupported, KindCanceled,
 	}
 	for _, k := range all {
 		err := E(k, "op", errors.New("x"))
@@ -155,6 +155,7 @@ func TestKindStringsAreStable(t *testing.T) {
 		KindTransient:     "transient",
 		KindExpired:       "expired",
 		KindInvalid:       "invalid",
+		KindPermission:    "permission_denied",
 		KindUnsupported:   "unsupported",
 		KindCanceled:      "canceled",
 	}

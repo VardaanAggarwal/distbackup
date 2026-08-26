@@ -258,7 +258,7 @@ func (idx *Index) WriteTo(w io.Writer) (int64, error) {
 		for id, loc := range s.m {
 			copy(buf[0:], id[:])
 			copy(buf[blob.IDSize:], loc.PackID[:])
-			binary.LittleEndian.PutUint64(buf[2*blob.IDSize:], uint64(loc.Offset))    //nolint:gosec // offsets are non-negative
+			binary.LittleEndian.PutUint64(buf[2*blob.IDSize:], uint64(loc.Offset))   //nolint:gosec // offsets are non-negative
 			binary.LittleEndian.PutUint64(buf[2*blob.IDSize+8:], uint64(loc.Length)) //nolint:gosec // lengths are non-negative
 			n, err := w.Write(buf)
 			written += int64(n)
@@ -307,7 +307,7 @@ func ReadFrom(r io.Reader) (*Index, error) {
 		copy(id[:], buf[0:blob.IDSize])
 		copy(packID[:], buf[blob.IDSize:2*blob.IDSize])
 
-		offset := int64(binary.LittleEndian.Uint64(buf[2*blob.IDSize:]))  //nolint:gosec // round-trips a non-negative value
+		offset := int64(binary.LittleEndian.Uint64(buf[2*blob.IDSize:]))   //nolint:gosec // round-trips a non-negative value
 		length := int64(binary.LittleEndian.Uint64(buf[2*blob.IDSize+8:])) //nolint:gosec // round-trips a non-negative value
 		if offset < 0 || length < 0 {
 			return nil, errs.E(errs.KindCorrupt, op,
