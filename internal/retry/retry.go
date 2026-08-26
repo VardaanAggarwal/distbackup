@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"sync"
 	"time"
 
 	"github.com/vardaanaggarwal/distbackup/internal/errs"
@@ -39,8 +40,19 @@ type Policy struct {
 	//
 	// Injectable purely so tests can be deterministic. Rejected: a global
 	// seed set in TestMain, which makes tests order-dependent.
+	//
+	// Access is serialised by jitterMu because *rand.Rand is not safe for
+	// concurrent use and a Policy is a value that callers copy and share
+	// across goroutines. This was found by the race detector: a single
+	// injected Rand shared by 32 goroutines retrying at once. The mutex could
+	// not live in Policy itself — copying a struct containing a sync.Mutex
+	// copies the lock and defeats it — so it is package-level. Jitter is
+	// computed at most once per retry, so the contention is irrelevant.
 	Rand *rand.Rand
 }
+
+// jitterMu serialises access to an injected Policy.Rand. See the Rand field.
+var jitterMu sync.Mutex
 
 // DefaultPolicy is the schedule used for provider calls.
 //
@@ -92,11 +104,14 @@ func (p Policy) delay(attempt int, throttled bool) time.Duration {
 		return 0
 	}
 
-	r := p.Rand
 	var n int64
-	if r != nil {
-		n = r.Int63n(int64(capped))
+	if p.Rand != nil {
+		jitterMu.Lock()
+		n = p.Rand.Int63n(int64(capped))
+		jitterMu.Unlock()
 	} else {
+		// The package-level functions in math/rand are already
+		// mutex-protected, so this path needs no lock of its own.
 		n = rand.Int63n(int64(capped)) //nolint:gosec // jitter, not cryptographic
 	}
 	return time.Duration(n)

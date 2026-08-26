@@ -4,13 +4,14 @@ Append-only. One entry per meaningful decision (CLAUDE.md R9).
 
 ---
 
-## D-001: Target Go 1.23 despite 1.27 being current
-**Date:** 2026-08-26
-**Decision:** `go.mod` declares `go 1.23`.
-**Alternatives considered:** Target 1.26/1.27 (current stable line).
-**Rationale:** The installed toolchain is go1.23.4. Declaring a version above the installed toolchain breaks the build for no benefit; nothing in the design needs a post-1.23 language or stdlib feature.
-**Trade-off accepted:** 1.23 is outside Go's support window (supported until two newer majors exist; 1.25/1.26/1.27 all shipped). No security backports. Upgrading is a one-line change.
-**Source:** https://go.dev/doc/devel/release, checked 2026-08-26. Local `go version`.
+## D-001: Target Go 1.24
+**Date:** 2026-08-26 (revised same day)
+**Decision:** `go.mod` declares `go 1.24`.
+**Originally:** `go 1.23`, chosen to match the installed toolchain (go1.23.4) on the reasoning that declaring a version above it breaks the build for no benefit.
+**Why it changed:** `aws-sdk-go-v2/service/ebs` v1.36.8 requires 1.24, so adding it (D-012) forced the bump. Go's `GOTOOLCHAIN=auto` downloads go1.24.0 transparently, so the build works on the 1.23.4 machine anyway — which was the original concern, and it turned out not to apply.
+**Trade-off accepted:** A fresh clone downloads a toolchain on first build. 1.24 is still outside the support window (1.25/1.26/1.27 have shipped), so there are no security backports; moving to 1.26 is a one-line change.
+**Note:** `golangci-lint` had to be reinstalled under 1.24 — a linter built with an older toolchain refuses to analyse a newer language version.
+**Source:** https://go.dev/doc/devel/release, checked 2026-08-26.
 
 ---
 
@@ -112,3 +113,24 @@ Append-only. One entry per meaningful decision (CLAUDE.md R9).
 It falls out of two decisions made for other reasons: content addressing (a blob's identity does not depend on which run wrote it) and an index that is a rebuildable cache rather than a source of truth.
 **Trade-off accepted:** Packs from a crashed run whose source is never backed up again linger until `gc`. That is the case `gc` exists for.
 **Source:** `internal/e2e.TestCrashedBackupWorkIsReusedByNextRun` and `TestGCReclaimsGenuineOrphans`.
+
+
+---
+
+## D-012: Keep an AWS SDK adapter that can never be executed
+**Date:** 2026-08-26
+**Decision:** `internal/source/ebs/awsclient.go` binds the package's `API` interface to `aws-sdk-go-v2/service/ebs` v1.36.8, despite R7 guaranteeing it will never run and the CLI offering no way to construct it.
+**Alternatives considered:** Omit it entirely and keep the project at zero third-party dependencies, describing the SDK binding in prose instead.
+**Rationale:** It is the only correctness evidence available under R7 that does not depend on my own reading of the documentation. Everything else in the package is checked against `Fake`, and a fake can only confirm that the client agrees with the same understanding that produced it. The adapter is type-checked by the compiler against the real SDK, which caught three things prose would not have: every index is `*int32` (not int64), almost every field is a pointer so a missing value is nil rather than zero, and `GetSnapshotBlockOutput.BlockData` really is an `io.ReadCloser`.
+**Trade-off accepted:** Five transitive dependencies, a `go` directive bump to 1.24 (D-001), and ~200 lines that no test executes. The guarantee is narrow and must be described as such: **the types line up; nothing is proven about runtime behaviour.**
+**Source:** `go doc` against module v1.36.8, 2026-08-26.
+
+---
+
+## D-013: Serialise access to an injected retry jitter source
+**Date:** 2026-08-26
+**Decision:** `retry.Policy.Rand`, when non-nil, is accessed under a package-level `jitterMu`.
+**Alternatives considered:** (a) Document that an injected `Rand` is single-goroutine only. (b) Put a mutex in `Policy`.
+**Rationale:** Found by the race detector: 32 goroutines retrying concurrently through one `Policy` value sharing one `*rand.Rand`, which is not safe for concurrent use. Option (a) makes a value type unsafe in a way that is invisible at the call site — a `Policy` is copied and passed around freely, so "do not share it" is not a constraint a caller can reasonably honour. Option (b) does not work: copying a struct containing a `sync.Mutex` copies the lock and defeats it, and `Policy` is copied by value everywhere.
+**Trade-off accepted:** A global lock on the jitter path. Irrelevant in practice — jitter is computed at most once per retry, and the nil-Rand default path (production) uses `math/rand`'s package functions, which are already mutex-protected and take no lock here.
+**Source:** `go test -race ./internal/store/s3/` failing on `PutIfAbsentIsAtomicUnderRace`.

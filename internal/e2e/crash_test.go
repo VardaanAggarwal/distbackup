@@ -44,7 +44,7 @@ func binary(t *testing.T) string {
 		cmd := exec.Command("go", "build", "-o", binPath, "../../cmd/distbackup")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			buildErr = fmt.Errorf("building distbackup: %v\n%s", err, out)
+			buildErr = fmt.Errorf("building distbackup: %w\n%s", err, out)
 		}
 	})
 	if buildErr != nil {
@@ -310,7 +310,7 @@ func TestCrashedBackupWorkIsReusedByNextRun(t *testing.T) {
 	}
 
 	bin := binary(t)
-	src := makeSource(t, 30, 512*1024)
+	src := makeSource(t, 80, 512*1024) // ~40 MiB
 	repoDir := t.TempDir()
 
 	if out, err := runCmd(t, "init", "--repo", repoDir); err != nil {
@@ -347,7 +347,7 @@ func TestGCReclaimsGenuineOrphans(t *testing.T) {
 	}
 
 	bin := binary(t)
-	crashSrc := makeSource(t, 30, 512*1024)
+	crashSrc := makeSource(t, 80, 512*1024) // ~40 MiB: too big to finish in the search window
 	otherSrc := makeSource(t, 3, 64*1024)
 	repoDir := t.TempDir()
 
@@ -390,15 +390,20 @@ func TestGCReclaimsGenuineOrphans(t *testing.T) {
 	}
 }
 
-// crashUntilPacksExist kills a backup, growing the delay until at least one
-// pack has actually been written.
+// crashUntilPacksExist kills a backup and returns once the repository is in
+// the state the caller needs: at least one pack written, and no snapshot.
 //
-// A fixed delay that lands before the first pack would make the calling tests
-// pass while exercising nothing, so the precondition is enforced rather than
-// assumed.
+// Both halves of that precondition matter, and getting only the first was a
+// real flake. A delay that lands before the first pack leaves nothing to
+// exercise; a delay that lands *after* the run finishes leaves a completed
+// backup whose pack is legitimately referenced, so a test asserting "gc
+// reclaims orphans" fails through no fault of gc. The delay is therefore
+// searched from short to long, and the repository is reset whenever an
+// attempt overshoots into a completed run.
 func crashUntilPacksExist(t *testing.T, bin, repoDir, src string) int {
 	t.Helper()
-	for delay := 20 * time.Millisecond; delay <= 800*time.Millisecond; delay *= 2 {
+
+	for delay := 10 * time.Millisecond; delay <= 800*time.Millisecond; delay = delay * 3 / 2 {
 		cmd := exec.Command(bin, "backup", "--repo", repoDir, "--source", src)
 		if err := cmd.Start(); err != nil {
 			t.Fatalf("start: %v", err)
@@ -409,12 +414,53 @@ func crashUntilPacksExist(t *testing.T, bin, repoDir, src string) int {
 		}
 		_ = cmd.Wait()
 
-		if n := countPacks(t, repoDir); n > 0 {
-			return n
+		packs, snaps := countPacks(t, repoDir), countSnapshots(t, repoDir)
+		switch {
+		case snaps > 0:
+			// Overshot: the backup completed before the kill landed. Reset
+			// and try again sooner.
+			resetRepo(t, bin, repoDir)
+			delay = 10 * time.Millisecond
+		case packs > 0:
+			return packs
 		}
 	}
-	t.Fatal("no crash left a pack behind; the test would prove nothing")
+	t.Fatal("could not produce a crashed backup with packs and no snapshot")
 	return 0
+}
+
+// countSnapshots returns how many snapshot manifests a repository holds.
+func countSnapshots(t *testing.T, repoDir string) int {
+	t.Helper()
+	entries, err := os.ReadDir(filepath.Join(repoDir, "snapshots"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0
+		}
+		t.Fatalf("counting snapshots: %v", err)
+	}
+	n := 0
+	for _, e := range entries {
+		if !e.IsDir() && !strings.HasPrefix(e.Name(), ".tmp-") {
+			n++
+		}
+	}
+	return n
+}
+
+// resetRepo wipes a repository back to freshly-initialised.
+func resetRepo(t *testing.T, bin, repoDir string) {
+	t.Helper()
+	if err := os.RemoveAll(repoDir); err != nil {
+		t.Fatalf("resetting repo: %v", err)
+	}
+	if err := os.MkdirAll(repoDir, 0o755); err != nil {
+		t.Fatalf("resetting repo: %v", err)
+	}
+	cmd := exec.Command(bin, "init", "--repo", repoDir)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("re-init: %v\n%s", err, out)
+	}
 }
 
 // The full CLI happy path, asserted end to end on the real binary.
