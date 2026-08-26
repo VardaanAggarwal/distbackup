@@ -23,9 +23,9 @@ Every fact below was checked against official documentation on **2026-08-26**. R
 |---|---|---|
 | Current Go stable | 1.27.0 (released 2026-08-19); 1.26.7 latest patch | go.dev/doc/devel/release |
 | Local toolchain | go1.23.4 darwin/arm64 | `go version` |
-| Target in `go.mod` | `go 1.23` | matches installed toolchain |
+| Target in `go.mod` | `go 1.24` | required by `aws-sdk-go-v2/service/ebs` v1.36.8 |
 
-`go 1.23` is two majors behind stable and is no longer in the supported window (Go supports a release until two newer majors exist). It satisfies CLAUDE.md's "Go 1.22+" and matches what is installed. Recorded as D-001; upgrading is a one-line change if the toolchain is updated.
+Originally `go 1.23`, to match the installed toolchain. Adding the AWS SDK (D-012) forced 1.24; `GOTOOLCHAIN=auto` downloads it transparently, so the 1.23.4 machine still builds. Still outside the support window — moving to 1.26 is a one-line change. Recorded as D-001.
 
 ### 2.2 EBS direct API
 
@@ -72,7 +72,7 @@ Pricing (doc's own example region; region-dependent): List\* $0.0006/1,000 reque
 ## 3. Architecture
 
 ```
-cmd/distbackup/          CLI (cobra) — the only place that calls os.Exit
+cmd/distbackup/          CLI (stdlib flag, D-010) — the only place that calls os.Exit
 internal/
   blob/                  BlobID (SHA-256) and formatting
   errs/                  typed error hierarchy, classification
@@ -85,7 +85,7 @@ internal/
     s3/                    modelled + fake                     [never run for real]
   source/                Source interfaces (core-owned)
     localfs/               filesystem walker → CDC path
-    synth/                 synthetic block device (deterministic, seedable)
+    synth/                 synthetic block device — NOT BUILT, see §6
     ebs/                   modelled + fault-injecting fake     [never run for real]
   repo/                  repository layout, snapshots, verify
   pipeline/              backup/restore orchestration          [from scratch]
@@ -116,7 +116,9 @@ type BlockSource interface {
     BlockSize() int64
     Size(ctx context.Context) (int64, error)
     ListBlocks(ctx context.Context, fn func(BlockRef) error) error
+    ListChangedBlocks(ctx context.Context, since string, fn func(ChangedBlockRef) error) error
     ReadBlock(ctx context.Context, ref BlockRef, buf []byte) (int, error)
+    ID() string
     Close() error
 }
 
@@ -124,6 +126,8 @@ type BlockSource interface {
 type FileSource interface {
     Walk(ctx context.Context, fn func(FileEntry) error) error
     Open(ctx context.Context, path string) (io.ReadCloser, error)
+    Root() string
+    Close() error
 }
 ```
 
@@ -191,22 +195,28 @@ Fixed pools only, never one goroutine per chunk. The sender closes the channel. 
 
 Each phase: acceptance criteria must pass before the next begins (R6). `go test -race ./...` and `golangci-lint run` clean at every phase boundary.
 
-| # | Phase | Deliverable | Acceptance |
+| # | Phase | Status | Notes |
 |---|---|---|---|
-| 0 | Scaffolding | module, `.gitignore`, `errs`, `retry`, architecture test | arch test fails on a planted cloud import; retry tests pass |
-| 1 | Chunker | FastCDC + Gear | **boundary-shift test** ≥95%; chunk sizes within [min,max]; determinism |
-| 2 | Pack format | writer, reader, header codec | round-trip; truncation detected; tail-recovery without index |
-| 3 | Index | sharded dedup index | **concurrent dedup test** (100 goroutines, exactly one `inserted==true`) under `-race` |
-| 4 | ObjectStore | interface, localfs, conformance suite | conformance suite green on localfs; `PutIfAbsent` race-safe |
-| 5 | Repository | layout, snapshots, config, versioning | format-version refusal; manifest atomicity |
-| 6 | Backup pipeline | worker pools, backpressure | end-to-end backup of a directory; no goroutine leaks |
-| 7 | Restore | restore pipeline | **round-trip test** byte-identical |
-| 8 | Verify + GC | `verify`, orphan reclamation | **crash test**: SIGKILL mid-backup → `verify` passes, no dangling refs |
-| 9 | CLI | cobra commands, `--dry-run`, `--max-blocks`, cost line | dry-run makes zero writes; cap aborts |
-| 10 | Sources | localfs walker, synthetic device | incremental backup re-stores only changed data |
-| 11 | EBS provider | client + fault-injecting fake | fake reproduces 60-min token expiry, empty-page pagination, throttling |
-| 12 | S3 store | client + fake | conformance suite green against S3 fake; 412 vs 409 classified correctly |
-| 13 | Benchmarks + README | measured numbers only | every number has a command, hardware, and date |
+| 0 | Scaffolding, errors, retry, arch test | **done** | Arch test verified to fail on a planted cloud import |
+| 1 | FastCDC chunker | **done** | Boundary-shift 100% (bar: 95%) |
+| 2 | Pack format | **done** | Truncation, bad magic, absurd length, tail recovery all covered |
+| 3 | Sharded index | **done** | Concurrent-dedup test verified to fail on broken locking |
+| 4 | ObjectStore + localfs + conformance suite | **done** | Suite runs with and without fsync |
+| 5 | Repository, snapshots, versioning | **done** | Index rebuild from pack tails works |
+| 6 | Backup pipeline | **done** | Fixed pools, no goroutine leaks |
+| 7 | Restore | **done** | Round-trip byte-identical |
+| 8 | Verify + GC | **done** | Crash test SIGKILLs a real subprocess |
+| 9 | CLI | **done** | `--dry-run`, `--max-bytes`, cost line |
+| 10 | Sources | **partial** | localfs walker done; **synthetic block device not built** |
+| 11 | EBS provider + fake | **done** | Plus an SDK adapter, compile-checked against v1.36.8 |
+| 12 | S3 store + fake | **done** | Passes the same conformance suite; 412 vs 409 distinguished |
+| 13 | Benchmarks + README | **done** | Every README number carries its command |
+
+### What was not built
+
+- **The synthetic block device source (Phase 10).** `source.BlockSource` has exactly one implementation, the EBS client. The interface is therefore validated by one provider rather than two, which is weaker than the ObjectStore side where localfs and S3 both pass a shared suite. A synthetic device would also let the block-backup path run end to end; as it stands, `BackupBlocks` does not exist — only `BackupFiles` does.
+- **The block backup pipeline.** The `BlockSource` interface, the EBS client, and the `KindBlocks` snapshot shape are all present and tested, but nothing wires a block source through the pipeline into a repository. This is the largest honest gap in the project.
+- **An S3 SDK adapter.** The EBS package has one (D-012); the S3 package does not. The pattern is demonstrated once rather than twice, deliberately, to avoid a second dependency for code that can never execute.
 
 GCP providers are **out of scope for v1** (R5: one cloud provider complete before a second). The interfaces make it additive; the README says so plainly rather than implying GCP support exists.
 
