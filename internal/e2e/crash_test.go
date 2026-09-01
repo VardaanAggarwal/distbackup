@@ -403,7 +403,11 @@ func TestGCReclaimsGenuineOrphans(t *testing.T) {
 func crashUntilPacksExist(t *testing.T, bin, repoDir, src string) int {
 	t.Helper()
 
-	for delay := 10 * time.Millisecond; delay <= 800*time.Millisecond; delay = delay * 3 / 2 {
+	// The ceiling is generous because CI runners are far slower than a dev
+	// machine: a pack only flushes once ~16 MiB has been chunked, and on a
+	// throttled shared runner that can take seconds. The loop exits as soon as
+	// the precondition is met, so a high ceiling costs nothing when it is fast.
+	for delay := 10 * time.Millisecond; delay <= 8*time.Second; delay = delay * 3 / 2 {
 		cmd := exec.Command(bin, "backup", "--repo", repoDir, "--source", src)
 		if err := cmd.Start(); err != nil {
 			t.Fatalf("start: %v", err)
