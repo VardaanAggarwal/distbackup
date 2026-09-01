@@ -9,10 +9,15 @@ credentials.*
 .gcloud/
 .config/gcloud/
 
-# Build output
+# Build output.
+#
+# These are anchored with a leading slash on purpose. An unanchored
+# "distbackup" matches at *any* depth, which silently excluded the entire
+# cmd/distbackup/ source directory from the repository — it built fine
+# locally, where the files exist on disk, and only failed on a fresh clone.
 /bin/
 /dist/
-distbackup
+/distbackup
 
 # Test artifacts and local repositories
 *.test
