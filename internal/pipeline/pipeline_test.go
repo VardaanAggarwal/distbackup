@@ -14,11 +14,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/repo"
-	srclocal "github.com/vardaanaggarwal/distbackup/internal/source/localfs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
-	storelocal "github.com/vardaanaggarwal/distbackup/internal/store/localfs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/repo"
+	srclocal "github.com/VardaanAggarwal/distbackup/internal/source/localfs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
+	storelocal "github.com/VardaanAggarwal/distbackup/internal/store/localfs"
 )
 
 // testTree writes a deterministic directory tree and returns its path.
@@ -116,7 +116,7 @@ func compareTrees(t *testing.T, want, got string) {
 	}
 }
 
-// TestRoundTrip is mandatory (CLAUDE.md R6) and must never be weakened.
+// TestRoundTrip is mandatory (docs/ENGINEERING-RULES.md R6) and must never be weakened.
 //
 // Back up a tree, restore it elsewhere, and compare byte for byte. Every
 // other test in this package checks a property; this one checks the thing the

@@ -2,7 +2,7 @@
 //
 // # Nothing here has ever run against AWS
 //
-// CLAUDE.md R7 forbids it, and the CLI deliberately offers no way to select
+// docs/ENGINEERING-RULES.md R7 forbids it, and the CLI deliberately offers no way to select
 // this backend. Everything below was written against the published API
 // reference (checked 2026-08-26) and is exercised against Fake, which models
 // S3's conditional-write semantics including the failure modes.
@@ -30,9 +30,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/retry"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/retry"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 // Conditional-write header values, verified 2026-08-26.

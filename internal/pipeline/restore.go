@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/repo"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/repo"
 )
 
 // RestoreOptions configures a restore.

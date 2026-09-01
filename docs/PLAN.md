@@ -1,13 +1,13 @@
 # distbackup — Build Plan
 
-**Status:** authoritative. Vardaan's edits to this file are binding and override anything else.
+**Status:** authoritative — this is the source of truth for architecture and scope.
 **Written:** 2026-08-26
 
 ---
 
 ## 1. What this is
 
-A content-addressed, deduplicating backup engine in Go with pluggable providers. The engine knows nothing about any cloud (CLAUDE.md R11). Local filesystem is the reference implementation and the default.
+A content-addressed, deduplicating backup engine in Go with pluggable providers. The engine knows nothing about any cloud (ENGINEERING-RULES.md R11). Local filesystem is the reference implementation and the default.
 
 **Hard constraint (R7):** no code here is ever run against a real cloud account. Cloud providers are modelled against published API contracts and exercised against fault-injecting fakes. This is stated in the README, not hidden.
 

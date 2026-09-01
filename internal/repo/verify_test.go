@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // saveSnapshotFor stores a snapshot referencing the given blobs.

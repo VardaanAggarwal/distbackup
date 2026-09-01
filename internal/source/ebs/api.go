@@ -2,7 +2,7 @@
 //
 // # Nothing here has ever run against AWS
 //
-// CLAUDE.md R7 forbids it absolutely. Every line in this package was written
+// docs/ENGINEERING-RULES.md R7 forbids it absolutely. Every line in this package was written
 // against the published API reference (checked 2026-08-26, citations inline)
 // and is exercised only against Fake, which reproduces the documented
 // behaviour including its failure modes.
@@ -17,7 +17,7 @@
 // # Layering
 //
 // The engine never sees any of this. `Source` satisfies source.BlockSource,
-// which the core owns (CLAUDE.md R11); the AWS SDK appears only in
+// which the core owns (docs/ENGINEERING-RULES.md R11); the AWS SDK appears only in
 // awsclient.go, and internal/arch enforces that.
 package ebs
 
@@ -162,7 +162,7 @@ type GetSnapshotBlockOutput struct {
 // PutSnapshotBlock, CompleteSnapshot) are deliberately absent: distbackup
 // reads snapshots into its own repository and never writes an EBS snapshot
 // back, so including them would be scope this project does not have
-// (CLAUDE.md R5).
+// (docs/ENGINEERING-RULES.md R5).
 type API interface {
 	ListSnapshotBlocks(ctx context.Context, in ListSnapshotBlocksInput) (*ListSnapshotBlocksOutput, error)
 	ListChangedBlocks(ctx context.Context, in ListChangedBlocksInput) (*ListChangedBlocksOutput, error)

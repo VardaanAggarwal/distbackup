@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# The whole suite is offline by design, so CI needs no secrets and no cloud
+# credentials. If a test ever starts requiring the network, that is a bug in
+# the test, not a reason to grant CI more access.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Verify formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files are not gofmt-clean:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      # The race detector is not optional here: this project's whole point is
+      # concurrency correctness, and several of its tests only mean anything
+      # when run under -race.
+      - name: Test (race detector)
+        run: go test -race ./...
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.8
+
+  benchmarks:
+    name: Benchmarks (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      # Runs each benchmark once, purely to prove they still compile and
+      # execute. CI hardware is too noisy for the numbers to mean anything —
+      # the figures in the README come from a known machine and say so.
+      - name: Run benchmarks once
+        run: go test -bench=. -benchtime=1x -run='^$' ./...

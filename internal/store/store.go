@@ -1,7 +1,7 @@
 // Package store defines the object store interface that distbackup writes
 // backups into, and the errors every implementation must produce.
 //
-// The interface is owned by the core, not by any provider (CLAUDE.md R11).
+// The interface is owned by the core, not by any provider (docs/ENGINEERING-RULES.md R11).
 // It is deliberately narrow: it contains what the repository layer needs and
 // nothing that exists merely because one vendor's SDK offers it. If a method
 // here could only be implemented by S3, the abstraction has leaked.
@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // ObjectInfo describes a stored object.

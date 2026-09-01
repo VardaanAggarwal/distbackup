@@ -15,7 +15,7 @@
 // pipeline then works around the lie at every call site. Two honest
 // interfaces cost one extra entry point and buy a design that reads clearly.
 //
-// Both interfaces are owned by the core (CLAUDE.md R11). Providers satisfy
+// Both interfaces are owned by the core (docs/ENGINEERING-RULES.md R11). Providers satisfy
 // them; nothing here knows that AWS or GCP exist.
 package source
 

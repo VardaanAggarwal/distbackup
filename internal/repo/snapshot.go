@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // SnapshotKind distinguishes the two shapes of source a snapshot can record.

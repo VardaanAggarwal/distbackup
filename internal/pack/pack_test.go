@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 func testBlob(seed int64, size int) []byte {

@@ -16,7 +16,7 @@
 // the boundaries after it fall in the same places, at the same content, and
 // deduplication resynchronises. TestBoundaryShift asserts this directly.
 //
-// Written from scratch (CLAUDE.md R3): this is the algorithmic core of the
+// Written from scratch (docs/ENGINEERING-RULES.md R3): this is the algorithmic core of the
 // project, and importing it would hollow out every interesting question about
 // it.
 package chunker
@@ -27,7 +27,7 @@ import (
 	"io"
 	"math/bits"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // Config holds the chunker's size parameters.

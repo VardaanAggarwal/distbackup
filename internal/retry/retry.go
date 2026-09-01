@@ -1,6 +1,6 @@
 // Package retry implements bounded exponential backoff with full jitter.
 //
-// Written from scratch rather than imported (CLAUDE.md R3): the backoff
+// Written from scratch rather than imported (docs/ENGINEERING-RULES.md R3): the backoff
 // strategy is one of the parts of this system worth being able to defend in
 // detail, and the whole implementation is under a hundred lines.
 package retry
@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // Policy describes a backoff schedule.

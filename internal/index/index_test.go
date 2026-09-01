@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 func testLoc(seed int) Location {
@@ -20,7 +20,7 @@ func testLoc(seed int) Location {
 	}
 }
 
-// TestConcurrentDedup is mandatory (CLAUDE.md R6) and must never be weakened.
+// TestConcurrentDedup is mandatory (docs/ENGINEERING-RULES.md R6) and must never be weakened.
 //
 // It is the test that proves Insert's check-and-set is atomic. If the
 // implementation ever regresses to read-lock-then-upgrade, two goroutines can

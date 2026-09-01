@@ -42,7 +42,7 @@ $ golangci-lint run ./...
 LINT EXIT: 0
 ```
 
-Mandatory concurrent dedup test (CLAUDE.md R6) — 100 goroutines released simultaneously from a barrier, repeated over 50 rounds:
+Mandatory concurrent dedup test (ENGINEERING-RULES.md R6) — 100 goroutines released simultaneously from a barrier, repeated over 50 rounds:
 
 ```
 --- PASS: TestConcurrentDedup (0.04s)
@@ -86,7 +86,7 @@ BenchmarkIndexInsert-8      4182931   342.5 ns/op
 BenchmarkIndexLookupHit-8  22718469    50.74 ns/op
 ```
 
-**A correction worth recording.** The first version of the parallel benchmarks measured 513 ns/op sharded against 525 ns/op single-mutex, which would have said sharding was pointless. The benchmark was wrong: it called `blob.Compute` inside the timed loop, so SHA-256 dominated and both variants were really measuring hashing. Precomputing the IDs outside the timed region exposed the actual 4.6× difference. This is the reason CLAUDE.md R2 insists a number comes with the command that produced it — the first set of numbers was reproducible and meaningless.
+**A correction worth recording.** The first version of the parallel benchmarks measured 513 ns/op sharded against 525 ns/op single-mutex, which would have said sharding was pointless. The benchmark was wrong: it called `blob.Compute` inside the timed loop, so SHA-256 dominated and both variants were really measuring hashing. Precomputing the IDs outside the timed region exposed the actual 4.6× difference. This is the reason ENGINEERING-RULES.md R2 insists a number comes with the command that produced it — the first set of numbers was reproducible and meaningless.
 
 ## 6. What a reviewer would challenge
 

@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/retry"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
-	"github.com/vardaanaggarwal/distbackup/internal/store/storetest"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/retry"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/store/storetest"
 )
 
 func fastRetry() Option {

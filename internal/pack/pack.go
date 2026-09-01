@@ -22,7 +22,7 @@
 // the index is unavailable. The cost is that a reader must seek to the end
 // before it can read anything.
 //
-// Written from scratch (CLAUDE.md R3).
+// Written from scratch (docs/ENGINEERING-RULES.md R3).
 package pack
 
 import (
@@ -36,8 +36,8 @@ import (
 
 	"crypto/sha256"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // Magic identifies a distbackup pack file and pins the format version.

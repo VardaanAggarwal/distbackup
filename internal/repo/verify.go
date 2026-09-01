@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 // VerifyOptions controls how thorough a verification is.

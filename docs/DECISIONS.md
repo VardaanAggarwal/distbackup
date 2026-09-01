@@ -1,6 +1,6 @@
 # Decision log
 
-Append-only. One entry per meaningful decision (CLAUDE.md R9).
+Append-only. One entry per meaningful decision (ENGINEERING-RULES.md R9).
 
 ---
 
@@ -19,9 +19,9 @@ Append-only. One entry per meaningful decision (CLAUDE.md R9).
 **Date:** 2026-08-26
 **Decision:** Cloud provider clients are modelled against published API contracts and exercised only against local fault-injecting fakes. No real API call, no cloud CLI, no real credentials, ever.
 **Alternatives considered:** A capped real run against an 8 GiB volume with `--dry-run` and `--max-blocks` guardrails (the original R7).
-**Rationale:** Vardaan's explicit instruction. Removes all spend and real-account risk from a portfolio project. A faithful fake that reproduces documented failure modes demonstrates more engineering judgment than a happy-path live call would.
+**Rationale:** Removes all spend and real-account risk, and keeps the entire test suite offline and deterministic. A faithful fake that reproduces the documented failure modes exercises far more of the client than a happy-path live call would — expired tokens, empty pages with continuation tokens, and throttling are all routine in the fake and rare in a short live run.
 **Trade-off accepted:** No integration validation. If a documented parameter is misread, no test will catch it — which is why R1 was strengthened to require reading the actual API reference page, and why the fakes are on the from-scratch list. The README must state this plainly; claiming or implying real-cloud validation would be fabrication under R2.
-**Source:** CLAUDE.md R7 as amended 2026-08-26.
+**Source:** ENGINEERING-RULES.md R7 as amended 2026-08-26.
 
 ---
 
@@ -89,16 +89,16 @@ Append-only. One entry per meaningful decision (CLAUDE.md R9).
 **Date:** 2026-08-26
 **Decision:** v1 ships local filesystem providers plus modelled AWS (EBS source, S3 store). No GCP.
 **Alternatives considered:** Ship GCS and persistent-disk providers alongside AWS.
-**Rationale:** CLAUDE.md R5: provider count is scope, and one cloud provider must be complete before a second starts. The provider abstraction (R11) is what demonstrates cloud-agnosticism; a second half-finished provider demonstrates less than one complete one plus a clean interface.
+**Rationale:** ENGINEERING-RULES.md R5: provider count is scope, and one cloud provider must be complete before a second starts. The provider abstraction (R11) is what demonstrates cloud-agnosticism; a second half-finished provider demonstrates less than one complete one plus a clean interface.
 **Trade-off accepted:** The project is cloud-agnostic by construction but only demonstrates one cloud. The README must say this explicitly rather than implying GCP support exists.
-**Source:** CLAUDE.md R5.
+**Source:** ENGINEERING-RULES.md R5.
 
 ---
 
 ## D-010: CLI uses the standard library `flag`, not cobra
 **Date:** 2026-08-26
 **Decision:** Subcommand dispatch is a `switch` over `os.Args[1]` with a `flag.FlagSet` per command.
-**Alternatives considered:** cobra, which CLAUDE.md R3 explicitly permits.
+**Alternatives considered:** cobra, which ENGINEERING-RULES.md R3 explicitly permits.
 **Rationale:** Six commands do not need a framework, and staying on the standard library keeps the whole project at **zero third-party dependencies**. That is not cosmetic: R7 requires `go test ./...` to pass with the machine offline, and every dependency is a way for that to stop being true. It also means a reviewer can read the entire program without knowing anyone else's API.
 **Trade-off accepted:** No generated completions, no nested subcommands, and help text is hand-written. All cheap at this size.
 **Related:** `golang.org/x/sync/errgroup` was added and then removed for the same reason — it silently pushed the `go` directive from 1.23 to 1.25 and pulled a new toolchain. The ~30 lines of coordination it provided are in `internal/pipeline/group.go`, which R3 wanted from scratch anyway.

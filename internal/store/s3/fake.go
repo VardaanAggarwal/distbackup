@@ -14,7 +14,7 @@ import (
 
 // Fake is an in-memory implementation of the S3 subset this package uses.
 //
-// Under CLAUDE.md R7 the real client is never run, so this is the only thing
+// Under docs/ENGINEERING-RULES.md R7 the real client is never run, so this is the only thing
 // that ever exercises Store. It therefore models the semantics that matter
 // rather than just storing bytes:
 //

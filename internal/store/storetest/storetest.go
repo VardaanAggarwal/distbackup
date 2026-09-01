@@ -1,7 +1,7 @@
 // Package storetest provides the conformance suite that every
 // store.ObjectStore implementation must pass.
 //
-// One suite, run against every backend including the fakes (CLAUDE.md R11).
+// One suite, run against every backend including the fakes (docs/ENGINEERING-RULES.md R11).
 // This is what keeps the abstraction honest: a provider is "done" when it
 // passes this, and a behaviour that differs between backends either shows up
 // here as a failure or is not a behaviour the engine is allowed to rely on.
@@ -22,8 +22,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 // Factory creates a fresh, empty store for one subtest.

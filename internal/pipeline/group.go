@@ -11,12 +11,12 @@ import (
 // This is golang.org/x/sync/errgroup's behaviour, written out here rather than
 // imported. Two reasons, in order of importance:
 //
-//  1. CLAUDE.md R3 puts pipeline orchestration on the from-scratch list. The
-//     coordination is thirty lines and it is exactly the part of the system an
-//     interviewer will ask about; importing it would move the interesting
-//     answer into someone else's repository.
+//  1. docs/ENGINEERING-RULES.md R3 puts pipeline orchestration on the from-scratch list. The
+//     coordination is thirty lines, and writing it out keeps the pipeline's
+//     failure and cancellation semantics visible in this repository rather
+//     than deferred to a dependency.
 //  2. It keeps distbackup's core at zero third-party dependencies, so
-//     `go test ./...` runs with the machine offline — which CLAUDE.md R7
+//     `go test ./...` runs with the machine offline — which docs/ENGINEERING-RULES.md R7
 //     requires and which a module download would quietly break. (Adding
 //     x/sync also forced the go directive from 1.23 to 1.25 and pulled a new
 //     toolchain, which was not a change worth taking for thirty lines.)

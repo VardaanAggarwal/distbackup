@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/repo"
-	storelocal "github.com/vardaanaggarwal/distbackup/internal/store/localfs"
+	"github.com/VardaanAggarwal/distbackup/internal/repo"
+	storelocal "github.com/VardaanAggarwal/distbackup/internal/store/localfs"
 )
 
 var (
@@ -77,7 +77,7 @@ func runCmd(t *testing.T, args ...string) (string, error) {
 	return string(out), err
 }
 
-// TestCrashDuringBackup is mandatory (CLAUDE.md R6) and must never be
+// TestCrashDuringBackup is mandatory (docs/ENGINEERING-RULES.md R6) and must never be
 // weakened.
 //
 // It SIGKILLs a backup at randomised points and then asserts the repository
@@ -520,7 +520,7 @@ func TestInitRefusesExisting(t *testing.T) {
 	}
 }
 
-// The --max-bytes guardrail must actually abort a run (CLAUDE.md R7).
+// The --max-bytes guardrail must actually abort a run (docs/ENGINEERING-RULES.md R7).
 func TestMaxBytesGuardrail(t *testing.T) {
 	if testing.Short() {
 		t.Skip("spawns subprocesses; skipped under -short")

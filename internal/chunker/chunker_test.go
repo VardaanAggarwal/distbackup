@@ -39,7 +39,7 @@ func boundaries(t *testing.T, data []byte, cfg Config) []int {
 	return offs
 }
 
-// TestBoundaryShift is mandatory (CLAUDE.md R6) and must never be weakened.
+// TestBoundaryShift is mandatory (docs/ENGINEERING-RULES.md R6) and must never be weakened.
 //
 // It is the test that proves this is content-defined chunking rather than
 // fixed-size chunking wearing a costume. Insert one byte at the front of a
@@ -342,7 +342,7 @@ func (r *failingReader) Read([]byte) (int, error) { return 0, r.err }
 // TestChunkSizeDistribution measures the real distribution rather than
 // assuming it. D-004 claims normalization pulls sizes toward the target; this
 // is the evidence for that claim, and the numbers it logs are the only ones
-// allowed to appear in the README (CLAUDE.md R2).
+// allowed to appear in the README (docs/ENGINEERING-RULES.md R2).
 func TestChunkSizeDistribution(t *testing.T) {
 	cfg := DefaultConfig()
 	data := deterministicData(64<<20, 2024)

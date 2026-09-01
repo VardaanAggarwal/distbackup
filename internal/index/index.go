@@ -18,7 +18,7 @@
 // selector, and no hash function is needed to derive one — the content address
 // *is* the hash. 256 shards, one per possible first byte.
 //
-// Written from scratch (CLAUDE.md R3).
+// Written from scratch (docs/ENGINEERING-RULES.md R3).
 package index
 
 import (
@@ -28,8 +28,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // NumShards is the number of independent shards.

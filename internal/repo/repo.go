@@ -24,7 +24,7 @@
 // believes is backed up, and it is why the manifest is written last and
 // atomically.
 //
-// Written from scratch (CLAUDE.md R3).
+// Written from scratch (docs/ENGINEERING-RULES.md R3).
 package repo
 
 import (
@@ -38,11 +38,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/index"
-	"github.com/vardaanaggarwal/distbackup/internal/pack"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/index"
+	"github.com/VardaanAggarwal/distbackup/internal/pack"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 const (

@@ -1,7 +1,7 @@
 // Package localfs implements source.FileSource over a local directory tree.
 //
 // This is the reference file source and the one the CLI uses by default
-// (CLAUDE.md R11). It has no cloud dependencies, which is what lets the whole
+// (docs/ENGINEERING-RULES.md R11). It has no cloud dependencies, which is what lets the whole
 // backup and restore path be exercised end to end under R7.
 package localfs
 
@@ -16,8 +16,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/source"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/source"
 )
 
 // Source walks a local directory tree.

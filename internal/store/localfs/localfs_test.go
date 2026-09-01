@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
-	"github.com/vardaanaggarwal/distbackup/internal/store/storetest"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/store/storetest"
 )
 
 // TestConformance runs the shared suite that every ObjectStore must pass.

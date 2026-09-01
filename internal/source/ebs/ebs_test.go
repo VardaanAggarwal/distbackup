@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/retry"
-	"github.com/vardaanaggarwal/distbackup/internal/source"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/retry"
+	"github.com/VardaanAggarwal/distbackup/internal/source"
 )
 
 // fastRetry keeps tests quick while still exercising the retry path.
@@ -490,7 +490,7 @@ func TestNewValidatesArguments(t *testing.T) {
 }
 
 // The cost model, computed from verified published pricing. This is the
-// arithmetic behind the CLI's estimate line (CLAUDE.md R7) and is checked so
+// arithmetic behind the CLI's estimate line (docs/ENGINEERING-RULES.md R7) and is checked so
 // the number in the README cannot drift from the code.
 func TestCostEstimateForReferenceVolume(t *testing.T) {
 	// An 8 GiB volume, fully written: 8 GiB / 512 KiB.

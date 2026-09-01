@@ -7,7 +7,7 @@
 //	walk (1) ──► chunk+hash (N) ──► pack assembly (1) ──► upload (M)
 //
 // Stage counts and the reasoning for each are in docs/PLAN.md §5. The rules
-// that hold everywhere in this package (CLAUDE.md):
+// that hold everywhere in this package (docs/ENGINEERING-RULES.md):
 //
 //   - Fixed worker pools. Never one goroutine per chunk — a large backup
 //     would create millions of them.
@@ -28,7 +28,7 @@
 // bytes to a buffer — so serialising it costs almost nothing while the
 // expensive stages (hashing, uploading) stay parallel.
 //
-// Written from scratch (CLAUDE.md R3).
+// Written from scratch (docs/ENGINEERING-RULES.md R3).
 package pipeline
 
 import (
@@ -41,12 +41,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/chunker"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/pack"
-	"github.com/vardaanaggarwal/distbackup/internal/repo"
-	"github.com/vardaanaggarwal/distbackup/internal/source"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/chunker"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/pack"
+	"github.com/VardaanAggarwal/distbackup/internal/repo"
+	"github.com/VardaanAggarwal/distbackup/internal/source"
 )
 
 // Options configures a backup run.
@@ -65,7 +65,7 @@ type Options struct {
 
 	// DryRun enumerates and counts work without writing anything.
 	//
-	// Part of the cost-guardrail set required by CLAUDE.md R7. It still reads
+	// Part of the cost-guardrail set required by docs/ENGINEERING-RULES.md R7. It still reads
 	// and chunks the source, so the reported figures are measured rather than
 	// estimated — the only thing it skips is the writes.
 	DryRun bool

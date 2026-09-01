@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/blob"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/pack"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
-	"github.com/vardaanaggarwal/distbackup/internal/store/localfs"
+	"github.com/VardaanAggarwal/distbackup/internal/blob"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/pack"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/store/localfs"
 )
 
 func newTestRepo(t *testing.T) *Repository {

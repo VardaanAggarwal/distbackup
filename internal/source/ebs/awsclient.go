@@ -9,14 +9,14 @@ import (
 	awsebs "github.com/aws/aws-sdk-go-v2/service/ebs"
 	ebstypes "github.com/aws/aws-sdk-go-v2/service/ebs/types"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // AWSClient adapts the real aws-sdk-go-v2 EBS client to the API interface.
 //
 // # This code has never executed
 //
-// CLAUDE.md R7 forbids contacting a real cloud account, and the CLI offers no
+// docs/ENGINEERING-RULES.md R7 forbids contacting a real cloud account, and the CLI offers no
 // way to construct one of these. So why does it exist at all?
 //
 // Because it is the only available evidence that the modelling in api.go is
@@ -174,7 +174,7 @@ func (c *AWSClient) GetSnapshotBlock(ctx context.Context, in GetSnapshotBlockInp
 
 // classify maps SDK errors into the engine's taxonomy.
 //
-// This is the whole reason a provider package exists (CLAUDE.md R11): the
+// This is the whole reason a provider package exists (docs/ENGINEERING-RULES.md R11): the
 // engine decides whether to retry based on errs.Kind, and translating a
 // vendor's error vocabulary into that vocabulary is the provider's job. If
 // the core had to know what a RequestThrottledException is, the abstraction

@@ -9,9 +9,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/retry"
-	"github.com/vardaanaggarwal/distbackup/internal/source"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/retry"
+	"github.com/VardaanAggarwal/distbackup/internal/source"
 )
 
 // Source reads an EBS snapshot as a block device.
@@ -46,7 +46,7 @@ func WithoutChecksumVerification() Option {
 // New returns a Source reading the given snapshot through api.
 //
 // api is injected rather than constructed here so the whole implementation
-// can be exercised against Fake. Under CLAUDE.md R7 that is not a convenience
+// can be exercised against Fake. Under docs/ENGINEERING-RULES.md R7 that is not a convenience
 // — it is the only way this code is ever executed at all.
 func New(api API, snapshotID string, opts ...Option) (*Source, error) {
 	const op = "ebs.New"

@@ -12,12 +12,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // Fake is an in-memory implementation of the EBS direct APIs.
 //
-// It is not a stub. Under CLAUDE.md R7 no code in this package will ever run
+// It is not a stub. Under docs/ENGINEERING-RULES.md R7 no code in this package will ever run
 // against AWS, so this is the only thing that ever exercises Source — which
 // makes its fidelity the project's entire evidence that the client is
 // correct. It therefore reproduces the *documented failure modes*, not the

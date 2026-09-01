@@ -34,18 +34,18 @@ That two-mask structure is normalized chunking, and it is the most valuable idea
 
 ```
 $ go test -race ./...
-ok  github.com/vardaanaggarwal/distbackup/internal/arch     1.219s
-ok  github.com/vardaanaggarwal/distbackup/internal/blob     (cached)
-ok  github.com/vardaanaggarwal/distbackup/internal/chunker  (cached)
-ok  github.com/vardaanaggarwal/distbackup/internal/errs     (cached)
-ok  github.com/vardaanaggarwal/distbackup/internal/retry    (cached)
+ok  github.com/VardaanAggarwal/distbackup/internal/arch     1.219s
+ok  github.com/VardaanAggarwal/distbackup/internal/blob     (cached)
+ok  github.com/VardaanAggarwal/distbackup/internal/chunker  (cached)
+ok  github.com/VardaanAggarwal/distbackup/internal/errs     (cached)
+ok  github.com/VardaanAggarwal/distbackup/internal/retry    (cached)
 TEST EXIT: 0
 
 $ golangci-lint run ./...
 LINT EXIT: 0
 ```
 
-Mandatory boundary-shift test (CLAUDE.md R6):
+Mandatory boundary-shift test (ENGINEERING-RULES.md R6):
 
 ```
 === RUN   TestBoundaryShift

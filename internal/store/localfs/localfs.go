@@ -1,7 +1,7 @@
 // Package localfs implements store.ObjectStore on the local filesystem.
 //
 // This is the reference implementation and distbackup's default backend
-// (CLAUDE.md R11). Everything in the engine works end to end against it with
+// (docs/ENGINEERING-RULES.md R11). Everything in the engine works end to end against it with
 // no cloud packages present, which is what makes the whole system testable
 // under the never-touch-real-cloud rule (R7).
 //
@@ -20,8 +20,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 // Store is a filesystem-backed object store rooted at a directory.

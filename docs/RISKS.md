@@ -6,15 +6,15 @@ Each risk: what goes wrong, likelihood, blast radius, early warning sign, mitiga
 
 ## R-001 — Scope creep past the plan
 **Likelihood:** High. This is the most common way a project like this fails.
-**Blast radius:** Project ships half-finished; nothing is defensible in an interview.
+**Blast radius:** The project ships half-finished, with several components partly built and none of them trustworthy.
 **Early warning:** Building a provider before the local path is complete; adding an abstraction "for later"; touching Phase 11 files while on Phase 6.
-**Mitigation:** CLAUDE.md R5 and the phase table in `PLAN.md`. One phase at a time. gRPC, metrics, and GCP are explicit non-goals, already cut.
+**Mitigation:** ENGINEERING-RULES.md R5 and the phase table in `PLAN.md`. One phase at a time. gRPC, metrics, and GCP are explicit non-goals, already cut.
 
 ---
 
 ## R-002 — A misread cloud API parameter is never caught
 **Likelihood:** Medium.
-**Blast radius:** The EBS/S3 provider is quietly wrong. In an interview this surfaces as "have you actually run this?" with no good answer.
+**Blast radius:** The EBS/S3 provider is quietly wrong, and nothing in the test suite can reveal it.
 **Early warning:** A fact in the code with no source citation or check date; a fake that only implements the happy path.
 **Mitigation:** R1 strengthened — read the API reference page itself, cite it with a date. Fakes reproduce documented failure modes, not just success. Every unverifiable claim marked `// UNVERIFIED:` and listed in `OPEN_QUESTIONS.md`. The README states plainly that no real cloud call was ever made.
 **Residual:** Real. Accepted knowingly under D-002. This is the honest cost of R7.
@@ -72,14 +72,14 @@ Each risk: what goes wrong, likelihood, blast radius, early warning sign, mitiga
 
 ## R-009 — Index memory blows up on a large corpus
 **Likelihood:** Medium at multi-TiB scale; low for anything demonstrable on a laptop.
-**Blast radius:** OOM; and an interview claim about scaling that does not survive scrutiny.
+**Blast radius:** Out-of-memory on a large repository, and a scaling claim in the README that does not survive scrutiny.
 **Early warning:** Quoting the ~1 GiB/TiB estimate as though it were measured. It is not (Q-003).
-**Mitigation:** Measure it in Phase 13. State the real limit in the README with the corpus it was measured on, and state plainly where it breaks. A documented honest limit is worth more than a scaling claim (CLAUDE.md, "Who it is for").
+**Mitigation:** Measure it in Phase 13. State the real limit in the README with the corpus it was measured on, and state plainly where it breaks. A documented honest limit is worth more than an unbacked scaling claim (R2).
 
 ---
 
 ## R-010 — The engine leaks provider concepts
 **Likelihood:** Medium. Abstractions erode under deadline pressure.
-**Blast radius:** The cloud-agnostic claim — a central part of the interview story — becomes indefensible.
+**Blast radius:** The cloud-agnostic claim — the central design property of this project — stops being true.
 **Early warning:** An interface method that exists only because one vendor has it; a core package importing a cloud SDK; a `switch` on provider type in the pipeline.
 **Mitigation:** R11 plus an architecture test that fails the build on a cloud SDK import outside a provider package. One shared conformance suite that every provider, including fakes, must pass.

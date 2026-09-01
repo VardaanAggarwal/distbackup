@@ -26,3 +26,9 @@ coverage.*
 .idea/
 .vscode/
 *.swp
+
+# Agent / process files. Kept out of the public repo deliberately: they are
+# working notes about how the project was planned and built, not part of the
+# project itself. Local copies live in ../distbackup-private/.
+CLAUDE.md
+AGENT_PROMPTS.md

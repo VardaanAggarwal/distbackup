@@ -8,9 +8,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/chunker"
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
-	"github.com/vardaanaggarwal/distbackup/internal/store"
+	"github.com/VardaanAggarwal/distbackup/internal/chunker"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/store"
 )
 
 // FormatVersion is the repository format this build reads and writes.

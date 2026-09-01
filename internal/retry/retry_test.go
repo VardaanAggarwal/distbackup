@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vardaanaggarwal/distbackup/internal/errs"
+	"github.com/VardaanAggarwal/distbackup/internal/errs"
 )
 
 // fastPolicy keeps test runtime negligible while preserving the shape of the

@@ -1,7 +1,7 @@
 // Package arch holds the architecture tests that enforce distbackup's
 // layering rules mechanically rather than by convention.
 //
-// CLAUDE.md R11 says the core engine must not know which provider it is
+// docs/ENGINEERING-RULES.md R11 says the core engine must not know which provider it is
 // talking to. That rule is worth nothing if it is only written down: layering
 // erodes under deadline pressure, and a single convenient import is all it
 // takes. This test fails the build instead.
@@ -89,7 +89,7 @@ func TestProviderDirsExistOrAreAbsent(t *testing.T) {
 // and a library that can call into it is a library that can kill the process.
 func TestCoreDoesNotImportCmd(t *testing.T) {
 	root := repoRoot(t)
-	const cmdPrefix = "github.com/vardaanaggarwal/distbackup/cmd"
+	const cmdPrefix = "github.com/VardaanAggarwal/distbackup/cmd"
 
 	for dir, imports := range packageImports(t, root) {
 		if strings.HasPrefix(dir, "cmd"+string(filepath.Separator)) || dir == "cmd" {
